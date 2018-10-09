@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Dual Lists | Beta</title>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+</head>
+<body>
+
+	<!-- Two lists -->
+	<h1 style="text-align: center" th:text="'Top Key: ' + ${top}"></h1>
+	
+	<br>
+	<br>
+	
+	<div style="float: left; height: 400px; width: 100px; overflow-y: auto">
+		<table>
+            <thead>
+                <tr>
+                    <th>Keywords</th>
+                </tr>
+            </thead>
+            <tbody  th:each="keyword : ${keywords}">
+                <tr>
+	                <td><a th:href="'lists/keyword/keyword?keyword=' + ${keyword}"><spam th:text="${keyword}"></spam></a></td>
+	            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="padding-left: 10px; padding-top: 10px; float: right; bottom: 10px; height: 600px; overflow-y: scroll">    
+        <table>
+            <thead>
+                <tr>
+                    <th>Urls</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="url : ${urls}">
+                    <!-- <td><a th:text="${url}" th:href="${url}"></a></td> -->
+                    <td><blockquote class="twitter-tweet" data-lang="en" data-width="600px"><p lang="en" dir="ltr"></p>&mdash; <a th:href="${url}"></a></blockquote></td>
+                </tr>
+            </tbody>
+        </table>
+	</div>
+	
+	<br>
+	<br>
+	<br>
+	<br>
+	<div>
+		<form action="#" th:action="@{/keywordSearch}" th:object="${postTopKey}" method="post">
+			<input type="text" th:field="*{key}" />
+			<button type="submit">Submit</button>
+		</form>
+	</div>
+
+</body>
+</html>

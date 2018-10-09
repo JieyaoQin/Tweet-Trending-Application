@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <title>Trending Tweets</title>
+        <link href="css/style.css"
+        rel="stylesheet">
+        
+        <!-- <link href="https://fonts.googleapis.com/css?family=Gugi" rel="stylesheet"> -->
+        
+        <!--<style>
+            table, th, td {
+               border: 1px solid black;
+               border-spacing: 0px;
+            }
+            th, td {
+                padding: 10px;
+            }
+        </style> -->
+    </head>
+    <body>
+    
+        <table>
+            <thead>
+                <tr>
+                    <th>Keywords</th>
+                    <th>Urls</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="rank : ${ranking}">
+                    <td th:text="${rank.getKeyword()}"></td>
+                    <td th:text="${rank.getMessage()}"></td>
+               
+                </tr>
+            </tbody>
+        </table>
+        
+        
+        <br />
+        <!-- 
+        <h2>Add Tweet</h2>
+        <form action="/addTweet" method="POST">
+            Url <input type="text" id="url" name="url" /><br />
+            Time <input type="text" id="time" name="time" /><br />
+            Keywords <textarea rows="5" cols="70" id="keywords" name="keywords" /></textarea><br />
+            <input type="submit" />
+        </form>
+         -->
+        
+        <!-- <script src="js/custom.js"></script> -->
+    </body>
+</html>

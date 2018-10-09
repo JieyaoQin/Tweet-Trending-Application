@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<h4>Title:</h4>
+	<p th:text="${title}" />
+	<h4>Count:</h4>
+	<p th:text="${count}" />
+
+	<form action="#" th:action="@{/welcomepost}" th:object="${post}" method="post">
+		<table>
+			<tr>
+				<td>Title:</td>
+				<td><input type="text" th:field="*{title}" /></td>
+				<td th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title error message</td>
+			</tr>
+			<tr>
+				<td>Count:</td>
+				<td><input type="text" th:field="*{count}" /></td>
+				<td th:if="${#fields.hasErrors('count')}" th:errors="*{count}">Count error message</td>
+			</tr>
+			<tr>
+				<td><button type="submit">Submit post</button></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<spam th:text="'Top Key: ' + ${top}"></spam>
+	
+	<br>
+	<br>
+	
+	<div>
+		<table style="float: left">
+            <thead>
+                <tr>
+                    <th>Keywords</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="keyword : ${keywords}">
+                    <td><a th:text="${keyword}" th:href="'/keyword/keyword?keyword=' + ${keyword}"></a></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Urls</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="url : ${urls}">
+                    <td><a th:text="${url}" th:href="${url}"></a></td>
+                </tr>
+            </tbody>
+        </table>
+	</div>
+	
+	<br>
+	<br>
+	<br>
+	<br>
+	<div>
+		<form action="#" th:action="@{/newtestsearch}" th:object="${postTopKey}" method="post">
+			<input type="text" th:field="*{key}" />
+			<button type="submit">Submit</button>
+		</form>
+	</div>
+
+</body>
+</html>

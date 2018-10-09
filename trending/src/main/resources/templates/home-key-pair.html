@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>Trending Tweets</title>
+        <style>
+            table, th, td {
+               border: 1px solid black;
+               border-spacing: 0px;
+            }
+            th, td {
+                padding: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Keyword</th>
+                    <th>Children</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="keyPair : ${keyPairList}">
+                    <td th:text="${keyPair.getId()}"></td>
+                    <td th:text="${keyPair.getKeyword()}"></td>
+                    <td th:text="${keyPair.getChildren()}"></td>
+               
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <h2>Add Tweet</h2>
+        <form action="/addTweet" method="POST">
+            Url <input type="text" id="url" name="url" /><br />
+            Time <input type="text" id="time" name="time" /><br />
+            Keywords <textarea rows="5" cols="70" id="keywords" name="keywords" /></textarea><br />
+            <input type="submit" />
+        </form>
+        
+        
+    </body>
+</html>

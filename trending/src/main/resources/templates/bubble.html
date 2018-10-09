@@ -1,0 +1,238 @@
+<html xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<!-- CSS Styling -->
+<style>
+	body {
+		font-family: 'Tajawal', sans-serif;
+		font-size: 150%;
+		margin: 0 auto;
+	}
+	
+	h1 {
+		font-family: 'Do Hyeon', sans-serif;
+		text-align: center;
+		padding-top: 20px;
+		padding-bottom: 20px;
+		margin: 0 auto;
+		border: 0px;
+		font-size: 150%;
+		text-decoration: underline;
+		color: white;
+		background-color: black;
+	}
+	
+	h3 {
+		text-decoration: underline;
+	}
+	
+	#tweets {
+		float: right;
+		height: 500px; 
+		overflow-y: scroll;
+	}
+	
+	#tweet-table {
+		text-align: center;
+		padding: 100px; 
+		padding-top: 10px; 
+		float: right; 
+		font-family: 'Do Hyeon', sans-serif;
+		font-size: 100%;
+	}
+	
+	#nav {
+		background-color: steelgray;
+	}
+	
+	td, th, tr {
+		text-align: center;
+	}
+	
+	.twitter-tweet {
+		vertical-align: center;
+		text-align: center;
+	}
+	
+	.button {
+		background-color: black;
+	    border: none;
+	    color: white;
+	    padding: 15px 32px;
+	    font-family: 'Do Hyeon', sans-serif;
+	    text-align: center;
+	    text-decoration: none;
+	    display: inline-block;
+	    font-size: 16px;
+	    margin: 4px 2px;
+	    cursor: pointer;
+	}
+	
+	.forms {
+		background-color: aliceblue;
+		padding: 10px;
+		border: 3px solid gray;
+		margin: 0px;
+	}
+	
+	inner {
+		vertical-align: center;
+	}
+
+</style>
+
+<body>
+<h1 th:text="${top}"></h1>
+
+
+<!-- <nav id="nav"><ul>
+</ul></nav> -->
+
+<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<link href="https://fonts.googleapis.com/css?family=Do+Hyeon|Tajawal" rel="stylesheet">
+
+<!-- Variables to pass to D3 JS -->
+<input type="hidden" id="top" th:value='${top}'/>
+<input type="hidden" id="keywords" th:value='${keywords}'/>
+<input type="hidden" id="frequencies" th:value='${frequencies}'/>
+
+
+<!-- Table for tweets -->
+<div id="tweet-table">
+	<div id="inner">
+		<div class="forms">
+			<!-- Home Button -->
+			<form class="form">
+				<input id="home-button" class="button" type="button" value="HOMEPAGE" 
+					onclick="window.location.href='/cycles/reset'" />
+			</form>
+			
+			<!-- Search Bar -->
+			<form class="form" id="search" action="#" th:action="@{/cycles/search}" th:object="${postTopKey}" method="post">
+				<input type="text" th:field="*{key}" />
+				<button class="button" type="submit">Search</button>
+			</form>
+		</div>
+		
+		<!-- Tweets -->
+		<h3>Related Tweets</h3>
+		<table class="table">
+		
+           <tbody  id="tweets" >
+               <tr th:each="url : ${urls}">
+                   <!-- <td><a th:text="${url}" th:href="${url}"></a></td> -->
+                   <td><blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr"></p>&mdash; <a th:href="${url}"></a></blockquote></td>
+               </tr>
+           </tbody>
+       </table>
+	
+	</div>
+</div>
+
+<div id="d3-div">
+
+	<script>
+		//*****************DATA**************************
+		//a string
+		var kwString = $("#keywords").val();
+		//remove [] and split by comma
+		var keywords = kwString.substring(1, kwString.length-1).split(", ");
+		console.log("Keywords:", keywords)
+		
+		// frequencies
+		var fString = $("#frequencies").val();
+		var frequencies = fString.substring(1, fString.length-1).split(", ");
+		for(var i = 0; i < frequencies.length; i++) {
+			frequencies[i] = parseInt(frequencies[i]);
+		}
+		
+		console.log("Frequencies:", frequencies);
+		
+		//The data json object
+		var data = {
+			"name": "flare",
+			"value": 60
+		}
+		
+		var children = new Array();
+		for(var i = 0; i < keywords.length; i++) {
+			children.push({"name": keywords[i], 
+				"value": frequencies[i], 
+				"url": "/cycles/keyword/keyword?keyword="+keywords[i]})
+		}
+		
+		data["children"] = children;
+		console.log("Keyword Json List:", data);
+		
+		
+		//***********************D3************************
+		
+		// colors
+		var topCount = frequencies[0];
+		
+		function getColor(count, topCount) {
+			var h = 240;
+			var min = 0.3;
+			var max = 0.8;
+			var s = Math.random() * (max - min) + min;
+			var l = Math.random() * (max - min) + min;
+			
+			s = Math.floor(s * 100);
+			// s = Math.max(30, s);
+			// s = Math.min(70, s);
+			// s = Math.floor(count / topCount * 100);
+			l = Math.floor(l * 100);
+			// l = Math.max(30, l);
+			// l = Math.min(70, l);
+			color = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
+			return color;
+		}
+		
+		var width = 1000, height = 640;
+		
+		var chart = d3.select("body").append("svg")
+			.attr("width", width).attr("height", height)
+		  .append("g")
+		  	.attr("transform", "translate(50,50)");
+		
+		var pack = d3.layout.pack()
+			.size([width, height - 50])
+			.padding(10);
+		
+		var nodes = pack.nodes(data);
+		
+		var node = chart.selectAll(".node")
+			  .data(nodes).enter()  
+			.append("g")
+			  .attr("class", "node")
+			  .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+		  	.append("a")
+				.attr("xlink:href", function(d) {return d.url;});
+		
+		node.append("text")
+			.attr("text-anchor", "middle")
+			.text(function(d) { return d.children ? "" : d.name; })
+			.style("font-size", function(d) { return Math.min(2 * d.r, (2 * d.r - 8) / this.getComputedTextLength() * 24) + "px"; })
+			.attr("dy", ".30em");
+		
+		
+		node.append("circle")
+			  .attr("r",function(d) { return d.r; })
+			  .attr("fill", function(d){ return d.children ? "#fff" : getColor(d.value, topCount); }) //make nodes with children invisible
+			  .attr("opacity", 0.25)
+			  .attr("stroke", function(d) { return d.children ? "#fff":"#ADADAD"; } ) //make nodes with children invisible
+			  .attr("stroke-width", 2)
+			  .on("mouseover", function() { d3.select(this).attr("fill", "white");})
+			  .on("mouseout", function(d) { 
+				  d3.select(this).attr("fill", function(d) {
+		              return d.children ? "#fff" : getColor(d.value, topCount);
+		          });
+			  });
+	
+	</script>
+
+</div>
+
+</body>
+</html>
